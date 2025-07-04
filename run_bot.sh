@@ -1,8 +1,8 @@
 #!/bin/bash
-# Labubu Bot Runner Script
+# Labubu Pilot Runner Script
 # This script sets up the environment and runs the bot
 
-echo "🤖 Starting Labubu Bot..."
+echo "🤖 Starting Labubu Pilot..."
 echo "=" * 50
 
 # Activate virtual environment

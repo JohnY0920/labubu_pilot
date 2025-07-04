@@ -1,89 +1,185 @@
-# Labubu Bot 🤖
+# Labubu Pilot 🤖
 
-An automated bot for monitoring and purchasing Labubu products from Pop Mart's website. The bot automatically checks product availability and attempts to add items to cart when they become available.
+An intelligent automation tool for monitoring and purchasing Labubu collectibles from Pop Mart's website. The bot automatically scans multiple product URLs, detects availability, and assists with the purchasing process when rare items become available.
 
-## Features
+## ✨ Features
 
-- 🔍 Monitors multiple Pop Mart products simultaneously
-- 🛒 Automatically adds products to cart when available
-- 🔔 Sends Discord notifications for successful cart additions
-- 🔊 Plays sound alerts on successful cart additions
-- 🛡️ Implements anti-bot detection measures
-- ⏱️ Human-like behavior simulation
-- 📝 Detailed logging of all activities
+- 🔍 **Smart Monitoring**: Scans multiple Pop Mart product URLs simultaneously
+- 🎯 **Availability Detection**: Automatically detects when products become available
+- 🛒 **Purchase Assistance**: Guides users through the purchase process
+- 🔔 **Discord Notifications**: Sends alerts to your Discord channel when products are found
+- 🔊 **Audio Alerts**: Plays system sound alerts for immediate notification
+- 🛡️ **Anti-Detection**: Implements sophisticated measures to avoid bot detection
+- ⏱️ **Human-like Behavior**: Simulates natural browsing patterns with random delays
+- 📝 **Comprehensive Logging**: Detailed logs of all bot activities
+- 🔐 **Secure Login**: Supports environment variables for credential management
+- 🌐 **Cross-Platform**: Works on Windows, macOS, and Linux
 
-## Prerequisites
+## 📋 Prerequisites
 
-- Python 3.8 or higher
-- Chrome browser installed
-- Pop Mart account (must be logged in to Chrome)
+- **Python 3.8 or higher**
+- **Google Chrome browser** (latest version recommended)
+- **Pop Mart account** with valid credentials
+- **Internet connection** with stable bandwidth
 
-## Installation
+## 🚀 Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/andryuxiong/labububot.git
-cd labubu-bot
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/JohnY0920/labubu_pilot.git
+   cd labubu_pilot
+   ```
+
+2. **Install required dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Set up environment variables** (Optional but recommended):
+   ```bash
+   # Create a .env file in the project directory
+   echo "DISCORD_WEBHOOK=your_discord_webhook_url_here" > .env
+   echo "POPMART_USERNAME=your_email@example.com" >> .env
+   echo "POPMART_PASSWORD=your_password" >> .env
+   ```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the project root with the following variables:
+
+```env
+# Discord Integration (Optional)
+DISCORD_WEBHOOK=https://discord.com/api/webhooks/your_webhook_url
+
+# Pop Mart Credentials (Optional - will prompt if not provided)
+POPMART_USERNAME=your_email@example.com
+POPMART_PASSWORD=your_secure_password
 ```
 
-2. Install required packages:
-```bash
-pip install -r requirements.txt
-```
+### Product URLs
 
-3. Create a `.env` file in the project directory:
-```
-DISCORD_WEBHOOK=your_discord_webhook_url_here
-```
+The bot is pre-configured to monitor specific Labubu product ranges. To customize the target products, edit the `PRODUCTS` list in `labubu_bot.py`:
 
-## Configuration
-
-1. Add your target products to the `PRODUCTS` list in `labubu_bot.py`:
 ```python
-PRODUCTS = [
-    "https://www.popmart.com/us/products/YOUR-PRODUCT-ID/PRODUCT-NAME",
-    # Add more products here
-]
+# Current configuration monitors products with IDs from 50000-50990
+PRODUCTS = [f"https://www.popmart.com/ca/pop-now/set/293-1000{str(i).zfill(4)}00879" for i in range(5000, 5100, 10)]
 ```
 
-2. Make sure you're logged into Pop Mart in your regular Chrome browser before running the bot.
+## 🎮 Usage
 
-## Usage
-
-Run the bot:
+### Method 1: Direct Python Execution
 ```bash
 python labubu_bot.py
 ```
 
-The bot will:
-1. Start monitoring the specified products
-2. Check availability every few seconds
-3. Attempt to add products to cart when available
-4. Send Discord notifications and play sound alerts on success
+### Method 2: Shell Script (macOS/Linux)
+```bash
+chmod +x run_bot.sh
+./run_bot.sh
+```
 
-## Output
+### Bot Workflow
 
-- Logs are written to `labubu_bot.log`
-- Discord notifications are sent for successful cart additions
-- Sound alerts play on successful cart additions
+1. **Initialization**: The bot starts up and configures Chrome WebDriver
+2. **Authentication**: Logs into Pop Mart using provided credentials
+3. **Monitoring**: Continuously scans configured product URLs
+4. **Detection**: When a product becomes available, the bot will:
+   - ✅ Play an audio alert
+   - 📱 Send Discord notification (if configured)
+   - 🌐 Keep the browser window open on the product page
+   - 📝 Display purchase instructions
 
-## Anti-Detection Measures
+5. **Manual Completion**: User completes the purchase manually for security
 
-The bot implements several measures to avoid detection:
-- Random delays between actions
-- Human-like behavior simulation
-- Chrome profile copying
-- WebDriver detection prevention
-- Multiple click methods
-- Random user agent rotation
+## 📊 Output & Logging
 
-## Notes
+- **Console Output**: Real-time status updates and progress information
+- **Log File**: Detailed logs written to `labubu_pilot.log`
+- **Discord Alerts**: Instant notifications when products are found
+- **Audio Alerts**: System sound notifications for immediate attention
 
-- The bot uses your Chrome profile to maintain login state
-- Make sure to keep your Chrome browser updated
-- The script can be stopped at any time with Ctrl+C
-- Discord notifications require a valid webhook URL
+## 🛡️ Anti-Detection Features
 
-## Disclaimer
+The bot implements several sophisticated measures to maintain stealth:
 
-This tool is for educational purposes only.
+- **Dynamic User Agents**: Rotates between modern browser identities
+- **Human-like Timing**: Random delays between actions (0.5-1.5 seconds)
+- **WebDriver Masking**: Removes automation detection signatures
+- **Natural Browsing**: Mimics real user interaction patterns
+- **Profile Management**: Uses clean browser profiles
+- **Error Handling**: Graceful recovery from detection attempts
+
+## 🔧 Advanced Configuration
+
+### Custom Delays
+Modify `human_like_delay()` function to adjust timing:
+```python
+def human_like_delay():
+    time.sleep(random.uniform(0.5, 1.5))  # Adjust range as needed
+```
+
+### User Agent Rotation
+Add custom user agents to the `USER_AGENTS` list for variety.
+
+### Monitoring Frequency
+The bot checks products continuously with built-in delays for optimal performance.
+
+## 🚨 Important Notes
+
+- **Manual Purchase**: For security, the bot assists with detection but requires manual purchase completion
+- **Rate Limiting**: Built-in delays prevent overwhelming Pop Mart's servers
+- **Credential Security**: Use environment variables to protect login information
+- **Legal Compliance**: Ensure usage complies with Pop Mart's Terms of Service
+- **Browser Updates**: Keep Chrome browser updated for optimal compatibility
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Chrome Driver Issues**:
+   ```bash
+   # Update Chrome to latest version
+   # Ensure ChromeDriver is in PATH
+   ```
+
+2. **Login Problems**:
+   - Verify credentials in `.env` file
+   - Check for two-factor authentication requirements
+   - Ensure Pop Mart account is active
+
+3. **Detection Issues**:
+   - Clear browser cache and cookies
+   - Try different user agents
+   - Increase delay intervals
+
+### Getting Help
+
+- Check `labubu_pilot.log` for detailed error information
+- Ensure all prerequisites are properly installed
+- Verify network connectivity and firewall settings
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ⚠️ Disclaimer
+
+This tool is provided for educational and personal use only. Users are responsible for:
+- Complying with Pop Mart's Terms of Service
+- Using the tool ethically and responsibly
+- Respecting website rate limits and policies
+- Understanding that automated purchasing may violate site terms
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit issues and enhancement requests.
+
+## 📞 Support
+
+For questions and support, please open an issue on the [GitHub repository](https://github.com/JohnY0920/labubu_pilot).
+
+---
+
+**Happy Collecting! 🎁**

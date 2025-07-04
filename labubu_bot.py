@@ -1,3 +1,9 @@
+"""
+Labubu Pilot - An intelligent automation tool for monitoring Labubu collectibles
+GitHub: https://github.com/JohnY0920/labubu_pilot
+License: MIT
+"""
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -20,7 +26,7 @@ load_dotenv()
 
 # Configure logging
 logging.basicConfig(
-    filename="labubu_bot.log",
+    filename="labubu_pilot.log",
     filemode="a",
     format="%(asctime)s [%(levelname)s] %(message)s",
     level=logging.INFO
@@ -431,7 +437,7 @@ def run_bot():
     run_bot_cycle()
 
 if __name__ == "__main__":
-    print("\n🚀 Starting Labubu Bot...")
+    print("\n🚀 Starting Labubu Pilot...")
     print("=" * 50)
     print("🔐 LOGIN: Bot will ask for credentials or use environment variables")
     print("💡 To set environment variables:")
