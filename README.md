@@ -1,4 +1,4 @@
-# Labubu Bot 🤖
+# Labubu Pilot 🤖
 
 An automated bot for monitoring and purchasing Labubu products from Pop Mart's website. The bot automatically checks product availability and attempts to add items to cart when they become available.
 
