@@ -177,7 +177,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - **Original Project**: This is a fork of [labububot](https://github.com/andryuxiong/labububot) by [@andryuxiong](https://github.com/andryuxiong)
-- **Enhancements**: Enhanced documentation, improved error handling, and code cleanup by [@JohnY0920](https://github.com/JohnY0920)
 
 ## ⚠️ Disclaimer
 
