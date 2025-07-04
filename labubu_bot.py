@@ -37,11 +37,8 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
 ]
 
-# List of product URLs to monitor
-PRODUCTS = [
-    "https://www.popmart.com/us/products/2155/THE-MONSTERS-Big-into-Energy-Series-Vinyl-Plush-Pendant-Blind-Box",
-    "https://www.popmart.com/us/products/1372/THE-MONSTERS---Have-a-Seat-Vinyl-Plush-Blind-Box"
-]
+# Modify PRODUCTS to iterate through numbers
+PRODUCTS = [f"https://www.popmart.com/ca/pop-now/set/293-1000{str(i).zfill(4)}" for i in range(2374, 2400, 10)]
 
 def get_random_user_agent():
     """Get a random user agent from the list of modern browsers."""
@@ -64,22 +61,17 @@ def play_sound_alert():
     except Exception as e:
         print(f"⚠️ Could not play sound alert: {str(e)}")
 
-def send_discord_alert(message):
-    """Send a notification to Discord webhook."""
-    if not DISCORD_WEBHOOK:
-        logging.warning("No Discord webhook configured")
-        return
-        
-    data = {"content": message}
+def login(driver, username, password):
+    """Log into Pop Mart using provided credentials."""
+    print("🔑 Attempting to log in...")
     try:
-        response = requests.post(DISCORD_WEBHOOK, json=data)
-        if response.status_code == 204:
-            logging.info("Sent Discord alert: " + message)
-            play_sound_alert()
-        else:
-            print(f"[⚠️] Discord alert failed with status {response.status_code}")
+        driver.get("https://www.popmart.com/login")
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "username"))).send_keys(username)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "password"))).send_keys(password)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Log In')]"))).click()
+        print("✅ Logged in successfully!")
     except Exception as e:
-        print(f"[❌] Error sending Discord alert: {e}")
+        print(f"❌ Login failed: {str(e)}")
 
 def get_driver():
     """Setup and return a Chrome webdriver instance with anti-detection measures."""
@@ -156,63 +148,35 @@ def get_driver():
         raise
 
 def add_to_cart(driver, url):
-    """Attempt to add a product to the cart using multiple click methods."""
+    """Attempt to add a product to the cart using the new process."""
     print("🔄 Starting add_to_cart process...")
     try:
-        print(f"📄 Current page: {driver.title}")
-        print(f"🔗 Current URL: {driver.current_url}")
+        driver.get(url)
+        WebDriverWait(driver, 5).until(lambda d: d.execute_script('return document.readyState') == 'complete')
         
-        human_like_delay()
+        # Click "Buy Multiple Boxes"
+        buy_multiple_btn = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "button.ant-btn-ghost.index_chooseMulitityBtn__n0MoA"))
+        )
+        buy_multiple_btn.click()
+        print("✅ Clicked 'Buy Multiple Boxes'")
         
-        # Look for the add to bag button using the most reliable selector
-        print("🔍 Looking for ADD TO BAG button...")
-        try:
-            add_btn = WebDriverWait(driver, 3).until(
-                EC.presence_of_element_located((By.XPATH, "//div[contains(text(), 'ADD TO BAG')]"))
-            )
-            print("✅ Found ADD TO BAG button")
-        except:
-            print("❌ Could not find ADD TO BAG button")
-            return False
+        # Wait and click "Select all"
+        time.sleep(1)
+        select_all_btn = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'Select all')]"))
+        )
+        select_all_btn.click()
+        print("✅ Clicked 'Select all'")
         
-        # Scroll the button into view with a random offset
-        print("📜 Scrolling to button...")
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});", add_btn)
-        human_like_delay()
+        # Click "ADD TO BAG"
+        add_to_bag_btn = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "button.ant-btn-primary.index_btn__Y5dKo"))
+        )
+        add_to_bag_btn.click()
+        print("✅ Clicked 'ADD TO BAG'")
         
-        click_success = False
-        try:
-            # Try JavaScript click first
-            driver.execute_script("arguments[0].click();", add_btn)
-            print("✅ Clicked button with JavaScript")
-            click_success = True
-        except Exception as e:
-            print(f"⚠️ JavaScript click failed: {str(e)}")
-            try:
-                # Try regular click
-                add_btn.click()
-                print("✅ Clicked button normally")
-                click_success = True
-            except Exception as e:
-                print(f"⚠️ Normal click failed: {str(e)}")
-                try:
-                    # Try ActionChains as last resort
-                    ActionChains(driver).move_to_element(add_btn).click().perform()
-                    print("✅ Clicked button with ActionChains")
-                    click_success = True
-                except Exception as e:
-                    print(f"❌ All click methods failed: {str(e)}")
-                    raise
-        
-        if click_success:
-            print("✅ Successfully clicked ADD TO BAG button")
-            play_sound_alert()
-            send_discord_alert(f"🎉 Successfully clicked ADD TO BAG for: {url}")
-            return True
-        else:
-            print("❌ Failed to click ADD TO BAG button")
-            return False
-            
+        return True
     except Exception as e:
         print(f"❌ Error in add_to_cart: {str(e)}")
         return False
@@ -258,63 +222,26 @@ def run_bot_cycle():
         try:
             driver = get_driver()
             print("✅ Created main browser window")
+            login(driver, "your_username", "your_password")  # Add login step
         except Exception as e:
-            print(f"❌ Failed to create driver: {str(e)}")
-            time.sleep(random.uniform(8, 12))
+            print(f"❌ Failed to create driver or log in: {str(e)}")
             return
         
-        while True:  # Continuous checking loop
-            # Check each product and add to cart if available
-            for product_url in PRODUCTS:
-                try:
-                    print(f"\n🔍 Checking product: {product_url}")
-                    
-                    # Refresh the page
-                    driver.get(product_url)
-                    
-                    # Wait for the page to load
-                    WebDriverWait(driver, 5).until(
-                        lambda d: d.execute_script('return document.readyState') == 'complete'
-                    )
-                    
-                    # Look for the add to bag button
-                    try:
-                        add_btn = WebDriverWait(driver, 3).until(
-                            EC.presence_of_element_located((By.XPATH, "//div[contains(text(), 'ADD TO BAG')]"))
-                        )
-                        print(f"✅ Product is available: {product_url}")
-                        
-                        # Try to add to cart immediately
-                        print(f"🛒 Attempting to add to cart: {product_url}")
-                        result = add_to_cart(driver, product_url)
-                        if result:
-                            print(f"✅ Successfully added to cart: {product_url}")
-                            # Continue to next product after a short delay
-                            human_like_delay()
-                            continue
-                    except:
-                        print(f"❌ Product is not available: {product_url}")
-                        continue
-                    
-                    # Add small random delay between products
-                    human_like_delay()
-                    
-                except Exception as e:
-                    print(f"❌ Error checking product {product_url}: {str(e)}")
-                    continue
-            
-            print("\n⏳ Completed checking all products, starting next cycle...")
-            # Small delay between cycles
-            time.sleep(random.uniform(1, 2))
-            
+        for product_url in PRODUCTS:
+            print(f"\n🔍 Checking product: {product_url}")
+            result = add_to_cart(driver, product_url)
+            if result:
+                print(f"✅ Successfully added to cart: {product_url}")
+                break  # Stop after first successful addition
+            else:
+                print(f"❌ Failed to add to cart: {product_url}")
+        
     except Exception as e:
         print(f"\n❌ Error: {str(e)}")
+    finally:
         if driver:
-            try:
-                driver.quit()
-            except:
-                pass
-        time.sleep(random.uniform(.5, 1))
+            driver.quit()
+        print("✨ Bot session ended")
 
 def run_bot():
     """Main function to run the bot continuously."""
