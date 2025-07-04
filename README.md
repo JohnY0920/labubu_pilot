@@ -1,14 +1,13 @@
 # Labubu Pilot 🤖
 
-An intelligent automation tool for monitoring and purchasing Labubu collectibles from Pop Mart's website. The bot automatically scans multiple product URLs, detects availability, and assists with the purchasing process when rare items become available.
+An automated monitoring tool for checking Labubu product availability on Pop Mart's website. The bot scans multiple product URLs in one cycle, detects available products, and keeps the browser open for manual purchase completion.
 
 ## ✨ Features
 
-- 🔍 **Smart Monitoring**: Scans multiple Pop Mart product URLs simultaneously
+- 🔍 **Smart Monitoring**: Scans multiple Pop Mart product URLs in one cycle
 - 🎯 **Availability Detection**: Automatically detects when products become available
-- 🛒 **Purchase Assistance**: Guides users through the purchase process
-- 🔔 **Discord Notifications**: Sends alerts to your Discord channel when products are found
-- 🔊 **Audio Alerts**: Plays system sound alerts for immediate notification
+- 🛒 **Manual Purchase Support**: Keeps browser open on available product page
+- 🔊 **Audio Alerts**: Plays system sound alerts when products are found
 - 🛡️ **Anti-Detection**: Implements sophisticated measures to avoid bot detection
 - ⏱️ **Human-like Behavior**: Simulates natural browsing patterns with random delays
 - 📝 **Comprehensive Logging**: Detailed logs of all bot activities
@@ -38,8 +37,7 @@ An intelligent automation tool for monitoring and purchasing Labubu collectibles
 3. **Set up environment variables** (Optional but recommended):
    ```bash
    # Create a .env file in the project directory
-   echo "DISCORD_WEBHOOK=your_discord_webhook_url_here" > .env
-   echo "POPMART_USERNAME=your_email@example.com" >> .env
+   echo "POPMART_USERNAME=your_email@example.com" > .env
    echo "POPMART_PASSWORD=your_password" >> .env
    ```
 
@@ -50,9 +48,6 @@ An intelligent automation tool for monitoring and purchasing Labubu collectibles
 Create a `.env` file in the project root with the following variables:
 
 ```env
-# Discord Integration (Optional)
-DISCORD_WEBHOOK=https://discord.com/api/webhooks/your_webhook_url
-
 # Pop Mart Credentials (Optional - will prompt if not provided)
 POPMART_USERNAME=your_email@example.com
 POPMART_PASSWORD=your_secure_password
@@ -84,21 +79,23 @@ chmod +x run_bot.sh
 
 1. **Initialization**: The bot starts up and configures Chrome WebDriver
 2. **Authentication**: Logs into Pop Mart using provided credentials
-3. **Monitoring**: Continuously scans configured product URLs
+3. **Single Scan**: Checks each configured product URL once for availability
 4. **Detection**: When a product becomes available, the bot will:
    - ✅ Play an audio alert
-   - 📱 Send Discord notification (if configured)
    - 🌐 Keep the browser window open on the product page
    - 📝 Display purchase instructions
+   - ⏳ Wait for user to manually complete purchase
 
-5. **Manual Completion**: User completes the purchase manually for security
+5. **Manual Purchase**: User completes the purchase manually in the open browser
+
+> **Note**: The bot runs ONE cycle and stops. To continuously monitor, you need to run it multiple times or modify the code for continuous checking.
 
 ## 📊 Output & Logging
 
 - **Console Output**: Real-time status updates and progress information
 - **Log File**: Detailed logs written to `labubu_pilot.log`
-- **Discord Alerts**: Instant notifications when products are found
-- **Audio Alerts**: System sound notifications for immediate attention
+- **Audio Alerts**: System sound notifications when products are found
+- **Browser Window**: Stays open on available product page for manual purchase
 
 ## 🛡️ Anti-Detection Features
 
@@ -123,12 +120,23 @@ def human_like_delay():
 ### User Agent Rotation
 Add custom user agents to the `USER_AGENTS` list for variety.
 
-### Monitoring Frequency
-The bot checks products continuously with built-in delays for optimal performance.
+### Continuous Monitoring
+To make the bot continuously check products, you can:
+
+1. **Use a loop script**:
+   ```bash
+   while true; do
+     python labubu_bot.py
+     sleep 30  # Wait 30 seconds between cycles
+   done
+   ```
+
+2. **Modify the code** to add a loop in the `run_bot()` function
 
 ## 🚨 Important Notes
 
-- **Manual Purchase**: For security, the bot assists with detection but requires manual purchase completion
+- **Single Cycle**: Bot checks products once and stops (not continuous)
+- **Manual Purchase**: Bot assists with detection but requires manual purchase completion
 - **Rate Limiting**: Built-in delays prevent overwhelming Pop Mart's servers
 - **Credential Security**: Use environment variables to protect login information
 - **Legal Compliance**: Ensure usage complies with Pop Mart's Terms of Service

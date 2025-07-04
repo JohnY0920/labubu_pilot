@@ -15,11 +15,7 @@ import os
 import time
 import random
 import platform
-import requests
 import logging
-import json
-import tempfile
-import shutil
 
 # Load environment variables
 load_dotenv()
@@ -32,8 +28,7 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-# Discord webhook for notifications
-DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
+# Note: Discord functionality not implemented in current version
 
 # List of modern user agents
 USER_AGENTS = [
