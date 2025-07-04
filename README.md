@@ -1,5 +1,7 @@
 # Labubu Pilot 🤖
 
+> **Note**: This project is a fork and enhanced version of the original [labububot](https://github.com/andryuxiong/labububot) by [@andryuxiong](https://github.com/andryuxiong). Thanks to the original author for the foundation!
+
 An automated monitoring tool for checking Labubu product availability on Pop Mart's website. The bot scans multiple product URLs in one cycle, detects available products, and keeps the browser open for manual purchase completion.
 
 ## ✨ Features
@@ -171,6 +173,11 @@ To make the bot continuously check products, you can:
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Original Project**: This is a fork of [labububot](https://github.com/andryuxiong/labububot) by [@andryuxiong](https://github.com/andryuxiong)
+- **Enhancements**: Enhanced documentation, improved error handling, and code cleanup by [@JohnY0920](https://github.com/JohnY0920)
 
 ## ⚠️ Disclaimer
 
