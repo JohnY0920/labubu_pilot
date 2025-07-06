@@ -368,24 +368,40 @@ def run_bot_cycle():
         # Login with provided credentials
         login(driver, username, password)
         
-        # Process each product - just check availability, don't add to cart
-        for product_url in PRODUCTS:
-            print(f"\n🔍 Checking product: {product_url}")
+        # Process each product - check availability and add to cart if found
+        for i, product_url in enumerate(PRODUCTS, 1):
+            print(f"\n🔍 Checking product {i}/{len(PRODUCTS)}: {product_url}")
             if check_product_availability(driver, product_url):
                 print(f"🎯 PRODUCT FOUND AND AVAILABLE!")
                 print(f"🌐 URL: {product_url}")
                 play_sound_alert()
-                product_found = True
-                print("\n🛒 Product is available! Browser window will remain open for you to complete the purchase manually.")
-                print("📝 To complete your purchase:")
-                print("   1. The product page is already loaded")
-                print("   2. Click 'Buy Multiple Boxes' or 'ADD TO BAG'")
-                print("   3. Complete the purchase process")
-                print("   4. Close the browser when done")
-                print("\n⏳ Browser window will stay open. Press Ctrl+C to close the bot when you're finished.")
-                break  # Stop after first available product found
+                
+                # Attempt to add to cart
+                print("🛒 Attempting to add product to cart...")
+                if add_to_cart(driver, product_url):
+                    print("✅ Product successfully added to cart!")
+                    product_found = True
+                    print("\n🎉 SUCCESS! Product added to cart and ready for checkout!")
+                    print("📝 Next steps:")
+                    print("   1. The product is now in your cart")
+                    print("   2. Complete the checkout process manually")
+                    print("   3. Review your order and payment details")
+                    print("   4. Close the browser when done")
+                    print("\n⏳ Browser window will stay open. Press Ctrl+C to close the bot when you're finished.")
+                    break  # Stop after first successful addition to cart
+                else:
+                    print("❌ Failed to add product to cart, but product is available")
+                    print("🔄 You can try adding it manually in the open browser window")
+                    product_found = True
+                    break
             else:
                 print(f"❌ Product not available: {product_url}")
+            
+            # Add sleep between URL checks to prevent rate limiting and IP blocking
+            if i < len(PRODUCTS):  # Don't sleep after the last product
+                sleep_time = random.uniform(2.0, 4.0)  # Random sleep between 2-4 seconds
+                print(f"⏳ Waiting {sleep_time:.1f} seconds before next check...")
+                time.sleep(sleep_time)
         
     except Exception as e:
         print(f"\n❌ Error in bot cycle: {str(e)}")
